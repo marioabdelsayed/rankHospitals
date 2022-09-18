@@ -30,19 +30,22 @@ rankall <- function(wantedRate = "heart attack", theRank){
   splitData <- split(outcomeData, outcomeData$State)
   #get the best ranked hospital in each state
   rankedList <- lapply(splitData, nthRankedHosp, theRank)
+
   #unlist elements if rankedList and store them in unlistedRank
   for (i in 1:length(rankedList)) {
     unlistedRank <- rbind(unlistedRank, unlist(rankedList[i]))
   }
+  names (unlistedRank) <- c('Hospital','State')
   return (unlistedRank)
 }
 #gets the nth ranked hospital in each state
 nthRankedHosp <- function(theData, theRank){
   #if the requested rank is less than the number of 
   #hospitals in the data
-  if(theRank <= nrow(theData)){
+  evaledRank <- evalRank(theRank, nrow(theData))
+  if(!(is.na(evaledRank)) && evaledRank <= nrow(theData)){
     #return the hospital name and the state abbreviation
-    return(c(theData[theRank,][["Hospital"]],theData[5,][["State"]]))
+    return(c(theData[evaledRank,][["Hospital"]],theData[5,][["State"]]))
   }
   #if not, return the NA and the state
   else
